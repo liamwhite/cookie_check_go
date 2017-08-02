@@ -5,8 +5,8 @@ import (
 	"crypto/cipher"
 	"crypto/sha1"
 	b64 "encoding/base64"
+	"encoding/json"
 	"fmt"
-    "encoding/json"
 	"golang.org/x/crypto/pbkdf2"
 	"net/url"
 	"os"
@@ -35,8 +35,8 @@ func main() {
 
 	fmt.Println(string(msg))
 
-    auth, _ := Authenticated(msg)
-    fmt.Println(auth)
+	auth, _ := Authenticated(msg)
+	fmt.Println(auth)
 }
 
 func CookieData(cookie string) ([]byte, []byte, error) {
@@ -87,24 +87,24 @@ func Decrypt(key []byte, data []byte, iv []byte) ([]byte, error) {
 	mode := cipher.NewCBCDecrypter(block, iv)
 	mode.CryptBlocks(msg, data)
 
-    length := len(msg)
-    unpadding := int(msg[length-1])
+	length := len(msg)
+	unpadding := int(msg[length-1])
 
 	return msg[:(length - unpadding)], nil
 }
 
 func Authenticated(b []byte) (bool, error) {
-    var f interface{}
-    err := json.Unmarshal(b, &f)
-    if err != nil {
-        return false, err
-    }
+	var f interface{}
+	err := json.Unmarshal(b, &f)
+	if err != nil {
+		return false, err
+	}
 
-    for k, _ := range f.(map[string]interface{}) {
-        if k == "warden.user.user.key" {
-            return true, nil
-        }
-    }
+	for k, _ := range f.(map[string]interface{}) {
+		if k == "warden.user.user.key" {
+			return true, nil
+		}
+	}
 
-    return false, nil
+	return false, nil
 }
