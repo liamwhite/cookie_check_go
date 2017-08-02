@@ -1,0 +1,4 @@
+*.swp
+cookie_check_go
+pkg/
+src/
